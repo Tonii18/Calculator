@@ -256,18 +256,39 @@ public class MainView extends JFrame {
 		buttons.add(product);
 		buttons.add(division);
 		
+		//Bucle For para controlar el pulsado de las teclas
+		
 		for(int i = 0; i < buttons.size(); i++) {
 			buttons.get(i).addKeyListener(new KeyAdapter() {
-				@Override
-				public void keyTyped(KeyEvent e) {
-					if (screen.getText().equals("0")) {
-                        screen.setText("");
-                    }
-                    char keyChar = e.getKeyChar();
-                    if (Character.isDigit(keyChar)) {
-                        screen.setText(screen.getText() + keyChar);
-                    }
-				}
+			    @Override
+			    public void keyTyped(KeyEvent e) {
+			        char keyChar = e.getKeyChar();
+
+			        // If the screen shows "0" and a digit is typed, clear the "0"
+			        if (screen.getText().equals("0") && Character.isDigit(keyChar)) {
+			            screen.setText(""); // Clear "0" before adding a new digit
+			        }
+
+			        // Append the digit to the screen
+			        if (Character.isDigit(keyChar)) {
+			            screen.setText(screen.getText() + keyChar);
+			        }
+			    }
+			    
+			    @Override
+			    public void keyPressed(KeyEvent e) {
+			        // Handle Backspace key
+			        if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+			            String currentText = screen.getText();
+
+			            if (currentText.length() == 1) {
+			                screen.setText("0");  // Set to "0" when the last character is deleted
+			            } else if (currentText.length() > 1) {
+			                screen.setText(currentText.substring(0, currentText.length() - 1));
+			            }
+			            e.consume(); // Prevent further processing of the event
+			        }
+			    }
 			});
 			
 			buttons.get(i).addActionListener(new ActionListener() {
@@ -294,6 +315,8 @@ public class MainView extends JFrame {
 				
 			});
 		}
+		
+		// Resto de codigo
 		
 	}
 }
