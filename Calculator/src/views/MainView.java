@@ -89,6 +89,7 @@ public class MainView extends JFrame {
 		panel.setLayout(null);
 		
 		JButton zero = new JButton("  0");
+		zero.setActionCommand("0");
 		zero.setForeground(new Color(255, 255, 255));
 		zero.setBorder(null);
 		zero.setBackground(new Color(174, 168, 168));
@@ -259,6 +260,9 @@ public class MainView extends JFrame {
 		//Bucle For para controlar el pulsado de las teclas
 		
 		for(int i = 0; i < buttons.size(); i++) {
+			
+			//Primer keyListener()
+			
 			buttons.get(i).addKeyListener(new KeyAdapter() {
 			    @Override
 			    public void keyTyped(KeyEvent e) {
@@ -274,7 +278,6 @@ public class MainView extends JFrame {
 			            screen.setText(screen.getText() + keyChar);
 			        }
 			    }
-			    
 			    @Override
 			    public void keyPressed(KeyEvent e) {
 			        // Handle Backspace key
@@ -288,8 +291,14 @@ public class MainView extends JFrame {
 			            }
 			            e.consume(); // Prevent further processing of the event
 			        }
+			        
+			        if(e.getKeyCode() == KeyEvent.VK_COMMA) {
+			        	screen.setText(screen.getText() + ",");
+			        }
 			    }
 			});
+			
+			//Segundo keyListener()
 			
 			buttons.get(i).addActionListener(new ActionListener() {
 				@Override
@@ -297,19 +306,25 @@ public class MainView extends JFrame {
 					JButton clickedButton = (JButton)e.getSource();
 					String buttonText = clickedButton.getText();
 					
-					if(buttonText.equals("C")) {
-						screen.setText("0");
-					}else if(buttonText.equals("  ")) {
-						if(screen.getText().length() == 1) {
+					if(clickedButton != sum && clickedButton != minus && clickedButton != product && clickedButton != division && clickedButton != equal) {
+						if(buttonText.equals("C")) {
 							screen.setText("0");
+						}else if(buttonText.equals("  ")) {
+							if(screen.getText().length() == 1) {
+								screen.setText("0");
+							}else {
+								screen.setText(screen.getText().substring(0, screen.getText().length()-1));
+							}
+						}else if(buttonText.contains(",")) {
+							screen.setText(screen.getText() + ",");
+						}else if(buttonText.contains("0")) {
+							screen.setText(screen.getText() + "0");
 						}else {
-							screen.setText(screen.getText().substring(0, screen.getText().length()-1));
+							if (screen.getText().equals("0")) {
+		                        screen.setText("");
+		                    }
+		                    screen.setText(screen.getText() + buttonText);
 						}
-					}else {
-						if (screen.getText().equals("0")) {
-	                        screen.setText("");
-	                    }
-	                    screen.setText(screen.getText() + buttonText);
 					}
 				}
 				
