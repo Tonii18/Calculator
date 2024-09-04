@@ -3,6 +3,13 @@ package views;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -11,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import java.awt.Cursor;
 
 public class MainView extends JFrame {
 
@@ -18,7 +26,7 @@ public class MainView extends JFrame {
 	private JPanel contentPane;
 	private JTextField screen;
 	
-	private JButton buttons[] = new JButton[17];
+	private ArrayList<JButton> buttons = new ArrayList<>();
 
 	/**
 	 * Launch the application.
@@ -59,10 +67,17 @@ public class MainView extends JFrame {
 		textPanel.setLayout(null);
 		
 		screen = new JTextField();
+		screen.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
+		screen.setBorder(null);
+		screen.setMargin(new Insets(2, 2, 2, 15));
+		screen.setText("0");
+		screen.setEditable(false);  // Make the text field non-editable
+        screen.setFocusable(false);  // Prevent the field from gaining focus
+        screen.setCursor(null);
 		screen.setForeground(new Color(255, 255, 255));
-		screen.setFont(new Font("Inter 28pt Black", Font.PLAIN, 40));
+		screen.setFont(new Font("Inter 28pt Black", Font.PLAIN, 45));
 		screen.setBackground(new Color(184, 184, 184));
-		screen.setHorizontalAlignment(SwingConstants.CENTER);
+		screen.setHorizontalAlignment(SwingConstants.RIGHT);
 		screen.setBounds(10, 10, 306, 56);
 		textPanel.add(screen);
 		screen.setColumns(10);
@@ -83,6 +98,7 @@ public class MainView extends JFrame {
 		panel.add(zero);
 		
 		JButton coma = new JButton("  ,");
+		coma.setActionCommand(",");
 		coma.setHorizontalAlignment(SwingConstants.LEFT);
 		coma.setForeground(Color.WHITE);
 		coma.setFont(new Font("Inter 28pt Black", Font.PLAIN, 35));
@@ -203,14 +219,81 @@ public class MainView extends JFrame {
 		nine.setBounds(160, 121, 60, 55);
 		panel.add(nine);
 		
-		JButton delete = new JButton("  ");
-		delete.setHorizontalAlignment(SwingConstants.RIGHT);
+		JButton erase = new JButton("  ");
+		erase.setHorizontalAlignment(SwingConstants.RIGHT);
+		erase.setForeground(Color.WHITE);
+		erase.setFont(new Font("Inter 28pt Black", Font.PLAIN, 35));
+		erase.setBorder(null);
+		erase.setBackground(new Color(255, 83, 114));
+		erase.setIcon(new ImageIcon(getClass().getResource("/Delete.png")));
+		erase.setBounds(14, 32, 135, 55);
+		panel.add(erase);
+		
+		JButton delete = new JButton("C");
 		delete.setForeground(Color.WHITE);
 		delete.setFont(new Font("Inter 28pt Black", Font.PLAIN, 35));
 		delete.setBorder(null);
-		delete.setBackground(new Color(255, 83, 114));
-		delete.setIcon(new ImageIcon(getClass().getResource("/Delete.png")));
-		delete.setBounds(14, 32, 135, 55);
+		delete.setBackground(new Color(69, 69, 69));
+		delete.setBounds(161, 32, 60, 55);
 		panel.add(delete);
+		
+		buttons.add(zero);
+		buttons.add(coma);
+		buttons.add(one);
+		buttons.add(two);
+		buttons.add(three);
+		buttons.add(four);
+		buttons.add(five);
+		buttons.add(six);
+		buttons.add(seven);
+		buttons.add(eight);
+		buttons.add(nine);
+		buttons.add(erase);
+		buttons.add(delete);
+		buttons.add(equal);
+		buttons.add(sum);
+		buttons.add(minus);
+		buttons.add(product);
+		buttons.add(division);
+		
+		for(int i = 0; i < buttons.size(); i++) {
+			buttons.get(i).addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyTyped(KeyEvent e) {
+					if (screen.getText().equals("0")) {
+                        screen.setText("");
+                    }
+                    char keyChar = e.getKeyChar();
+                    if (Character.isDigit(keyChar)) {
+                        screen.setText(screen.getText() + keyChar);
+                    }
+				}
+			});
+			
+			buttons.get(i).addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					JButton clickedButton = (JButton)e.getSource();
+					String buttonText = clickedButton.getText();
+					
+					if(buttonText.equals("C")) {
+						screen.setText("0");
+					}else if(buttonText.equals("  ")) {
+						if(screen.getText().length() == 1) {
+							screen.setText("0");
+						}else {
+							screen.setText(screen.getText().substring(0, screen.getText().length()-1));
+						}
+					}else {
+						if (screen.getText().equals("0")) {
+	                        screen.setText("");
+	                    }
+	                    screen.setText(screen.getText() + buttonText);
+					}
+				}
+				
+			});
+		}
+		
 	}
 }
