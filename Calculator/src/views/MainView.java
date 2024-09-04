@@ -26,6 +26,12 @@ public class MainView extends JFrame {
 	private JPanel contentPane;
 	private JTextField screen;
 	
+	private float n1 = 0;
+	private float n2 = 0;
+	private JButton operation = null;
+	private float result = 0;
+	private int intResult = 0;
+	
 	private ArrayList<JButton> buttons = new ArrayList<>();
 
 	/**
@@ -320,12 +326,51 @@ public class MainView extends JFrame {
 						}else if(buttonText.contains("0")) {
 							screen.setText(screen.getText() + "0");
 						}else {
-							if (screen.getText().equals("0")) {
+							//Logica para escribir los numeros en caso de haber un '0' o algun operador
+							if (screen.getText().equals("0") || screen.getText().equals("+") || screen.getText().equals("-") || screen.getText().equals("X") || screen.getText().equals("/")) {
 		                        screen.setText("");
 		                    }
 		                    screen.setText(screen.getText() + buttonText);
+		                    
+		                    n2 = Float.valueOf(screen.getText());
+		                    
+						}
+					}else {
+						if(clickedButton == sum) {
+							n1 = Float.valueOf(screen.getText());
+							screen.setText("+");
+							operation = sum;
+						}else if(clickedButton == minus) {
+							n1 = Float.valueOf(screen.getText());
+							screen.setText("-");
+							operation = minus;
+						}else if(clickedButton == division) {
+							n1 = Float.valueOf(screen.getText());
+							screen.setText("/");
+							operation = division;
+						}else if(clickedButton == product) {
+							n1 = Float.valueOf(screen.getText());
+							screen.setText("X");
+							operation = product;
 						}
 					}
+					
+					//Logica para el operador '='
+					
+					if(clickedButton == equal) {
+                    	screen.setText("");
+                    	if(operation.getActionCommand().equals("+")){
+                    		result = n1 + n2;
+                    	}else if(operation.getActionCommand().equals("-")) {
+                    		result = n1 - n2;
+                    	}else if(operation.getActionCommand().equals("X")) {
+                    		result = n1 * n2;
+                    	}else if(operation.getActionCommand().equals("/")) {
+                    		result = n1 / n2;
+                    	}
+                    	//screen.setText("");
+                    	screen.setText(String.valueOf(result));
+                    }
 				}
 				
 			});
