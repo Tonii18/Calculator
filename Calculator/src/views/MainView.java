@@ -28,7 +28,7 @@ public class MainView extends JFrame {
 	
 	private float n1 = 0;
 	private float n2 = 0;
-	private JButton operation = null;
+	private JButton operation;
 	private float result = 0;
 	private int intResult = 0;
 	
@@ -54,6 +54,11 @@ public class MainView extends JFrame {
 	 * Create the frame.
 	 */
 	public MainView() {
+		setTitle("Calculadora");
+        
+        ImageIcon icon = new ImageIcon(getClass().getResource("/calculadora-3d.png"));
+        setIconImage(icon.getImage());
+        
 		setBackground(new Color(240, 240, 240));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 360, 590);
@@ -64,6 +69,8 @@ public class MainView extends JFrame {
 
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
+		
+		operation = new JButton();
 		
 		JPanel textPanel = new JPanel();
 		textPanel.setBorder(null);
@@ -270,20 +277,7 @@ public class MainView extends JFrame {
 			//Primer keyListener()
 			
 			buttons.get(i).addKeyListener(new KeyAdapter() {
-			    @Override
-			    public void keyTyped(KeyEvent e) {
-			        char keyChar = e.getKeyChar();
-
-			        // If the screen shows "0" and a digit is typed, clear the "0"
-			        if (screen.getText().equals("0") && Character.isDigit(keyChar)) {
-			            screen.setText(""); // Clear "0" before adding a new digit
-			        }
-
-			        // Append the digit to the screen
-			        if (Character.isDigit(keyChar)) {
-			            screen.setText(screen.getText() + keyChar);
-			        }
-			    }
+			    
 			    @Override
 			    public void keyPressed(KeyEvent e) {
 			        // Handle Backspace key
@@ -298,13 +292,63 @@ public class MainView extends JFrame {
 			            e.consume(); // Prevent further processing of the event
 			        }
 			        
-			        if(e.getKeyCode() == KeyEvent.VK_COMMA) {
-			        	screen.setText(screen.getText() + ",");
+			        //Logica de pulsado de teclas de operadores
+			        
+			        if (Character.isDigit(e.getKeyChar()) || e.getKeyChar() == '.') {
+			            // Clear the screen if it shows an operator or "0"
+			            if (screen.getText().equals("0") || screen.getText().equals("+") || screen.getText().equals("-") || screen.getText().equals("X") || screen.getText().equals("/")) {
+			                screen.setText("");
+			            }
+			            // Append the pressed key to the screen
+			            screen.setText(screen.getText() + e.getKeyChar());
+
+			            // Capture n2 for the second operand (in case of an operator)
+			            n2 = Float.valueOf(screen.getText());
+			        } else {
+			            // Handle operator keys
+			            if (e.getKeyCode() == KeyEvent.VK_DIVIDE) {
+			                n1 = Float.valueOf(screen.getText());
+			                screen.setText("/");
+			                operation.setActionCommand("/");  // Set the operation
+			            } else if (e.getKeyCode() == KeyEvent.VK_ADD) {
+			                n1 = Float.valueOf(screen.getText());
+			                screen.setText("+");
+			                operation.setActionCommand("+");  // Set the operation
+			            } else if (e.getKeyCode() == KeyEvent.VK_SUBTRACT) {
+			                n1 = Float.valueOf(screen.getText());
+			                screen.setText("-");
+			                operation.setActionCommand("-");  // Set the operation
+			            } else if (e.getKeyCode() == KeyEvent.VK_MULTIPLY) {
+			                n1 = Float.valueOf(screen.getText());
+			                screen.setText("X");
+			                operation.setActionCommand("X");  // Set the operation
+			            }
 			        }
+
+			        // Handle Enter key for executing the operation
+			        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+			            float result = 0;
+			            String op = operation.getActionCommand();  // Get the action command of the operator
+
+			            // Perform the calculation based on the stored operation
+			            if (op.equals("+")) {
+			                result = n1 + n2;
+			            } else if (op.equals("-")) {
+			                result = n1 - n2;
+			            } else if (op.equals("X")) {
+			                result = n1 * n2;
+			            } else if (op.equals("/")) {
+			                result = n1 / n2;
+			            }
+
+			            // Show the result on the screen
+			            screen.setText(String.valueOf(result));
+			        }
+			        
 			    }
 			});
 			
-			//Segundo keyListener()
+			//Segundo keyListener() --> Click de botones
 			
 			buttons.get(i).addActionListener(new ActionListener() {
 				@Override
@@ -322,7 +366,7 @@ public class MainView extends JFrame {
 								screen.setText(screen.getText().substring(0, screen.getText().length()-1));
 							}
 						}else if(buttonText.contains(",")) {
-							screen.setText(screen.getText() + ",");
+							screen.setText(screen.getText() + ".");
 						}else if(buttonText.contains("0")) {
 							screen.setText(screen.getText() + "0");
 						}else {
